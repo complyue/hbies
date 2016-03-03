@@ -1,0 +1,25 @@
+{
+  "name": "hbi",
+  "version": "1.0.0",
+  "description": "Hosting Based Interfacing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/complyue/hbi.git"
+  },
+  "keywords": [
+    "lightweight",
+    "network",
+    "communication",
+    "protocol"
+  ],
+  "author": "Compl Yue",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/complyue/hbi/issues"
+  },
+  "homepage": "https://github.com/complyue/hbi#readme"
+}
