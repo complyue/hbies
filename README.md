@@ -12,12 +12,13 @@ let hbic = new hbi.HBIC({
     os: require('os'),
     told: rhn => console.log(`Ahah, now I know ${host}:${port} is hosted by ${rhn}`)
 })
-hbic.wire(require('net').connect(port, host))
-hbic.send(String.raw `
+hbic.wire(require('net').connect(port, host, ()=>{
+  hbic.send(String.raw `
     console.log("This is a HI from ${os.hostname()}.\nI know you can see you're on host " + os.hostname() + ", but I can't see that!")
     console.log(" umm... unless...")
     sendBack('told(' + JSON.stringify(os.hostname()) + ')')
-`)
+  `)
+}))
 
 ```
 
