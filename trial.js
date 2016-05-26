@@ -4,11 +4,11 @@ if (require.main !== module) {
   throw module.filename + ' always run on its own'
 }
 
-/** 
+/**
  * Hosting Based Interfacing demo
 
- * the addr is specified by cmdl arg 1, 
- * first run will acting as server to listen on it, 
+ * the addr is specified by cmdl arg 1,
+ * first run will acting as server to listen on it,
  * subsequent runs will connect to the addr and start repl
  */
 
