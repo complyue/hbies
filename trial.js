@@ -4,6 +4,7 @@ if (require.main !== module) {
   throw module.filename + ' always run on its own'
 }
 
+
 /**
  * Hosting Based Interfacing demo
 
@@ -27,64 +28,85 @@ if (!addr) {
   console.log('  node', module.filename, '\'({path:"hbi.sock"})\'')
   require('process').exit(1)
 }
-
 let port = parseInt(addr)
-if (isFinite(port))
+if (isFinite(port)) {
   addr = port
-else if (eval(addr))
+} else if (eval(addr)) {
   addr = eval(addr)
-
-// share a single hbi context for all connected clients
-let hbiCtx = {
-  // here too many artifacts are exposed, DO NOT do this in real HBI applications
-  console: console,
-  require: require,
-  os: require('os'),
-  versions: require('process').versions
 }
-let svr = require('net').createServer((socket) => {
-  let hbic = new hbi.HBIC(hbiCtx)
-  hbic.on(hbi.PACK_EVENT, (packet, code) => {
-    console.log('[hbi server got packet of type ' + typeof(packet) + ']:', packet)
-    console.log('[hbi flew code]:', code)
-  })
-  hbic.on(hbi.WIRE_ERR_EVENT, (err) => {
-    console.log('[hbic wire error in server]:', err.stack || err)
-  })
-  hbic.on(hbi.PEER_ERR_EVENT, (err) => {
-    console.log('[hbi landing error in client side]:', err)
-    console.log('[disconnecting hbi] ...')
-    hbic.disconnect()
-  })
-  hbic.on(hbi.LANDING_ERR_EVENT, (err, code) => {
-    console.log('[hbi landing error in server side]:', err.stack || err)
-    console.log('[hbi flew code]:', code)
-    console.log(' ** normally the situation should be analyzed and avoided **')
-    console.log(' ** sending the err as peer err to client now **')
-    hbic.sendPeerError(err)
-  })
-  hbic.wire(socket)
-})
-svr.on('listening', () => {
-  console.log('[hbi server listening]:', addr)
-})
-svr.on('error', (err) => {
-  svr.close()
-  if (err.code !== 'EADDRINUSE') {
-    throw err
+
+
+(function startServer() {
+  // share a single hbi context for all connected clients
+  let hbiCtx = {
+    // here too many artifacts are exposed, DO NOT do this in real HBI applications
+    console: console,
+    require: require,
+    os: require('os'),
+    versions: require('process').versions
   }
-  // had svr there, act as repl client, reuse the same hbic amount reconnects
+
+  let svr = require('net').createServer((socket) => {
+    let hbic = new hbi.HBIC(hbiCtx)
+    hbic.on(hbi.PACKET_EVENT, (packet, code) => {
+      console.log('[hbi server got packet of type ' + typeof(packet) + ']:', packet)
+      console.log('[hbi flew code]:', code)
+    })
+    hbic.on(hbi.WIRE_ERR_EVENT, (err) => {
+      console.log('[hbic wire error in server]:', err.stack || err)
+    })
+    hbic.on(hbi.WIRE_CLOSE_EVENT, () => {
+      console.log('[server hbic wire closed]')
+    })
+    hbic.on(hbi.PEER_ERR_EVENT, (err) => {
+      console.log('[hbi landing error in client side]:', err)
+      console.log('[disconnecting hbi] ...')
+      hbic.disconnect()
+    })
+    hbic.on(hbi.LANDING_ERR_EVENT, (err, code) => {
+      console.log('[hbi landing error in server side]:', err.stack || err)
+      console.log('[hbi flew code]:', code)
+      console.log(' ** normally the situation should be analyzed and avoided **')
+      console.log(' ** sending the err as peer err to client now **')
+      hbic.sendPeerError(err)
+    })
+    hbic.wire(socket)
+  })
+  svr.listen(addr)
+  svr.on('listening', () => {
+    console.log('[hbi server listening]:', addr)
+  })
+  svr.on('error', (err) => {
+    svr.close()
+    svr = null; // release ref
+    if (err.code !== 'EADDRINUSE') {
+      // real error
+      throw err
+    }
+
+    // had svr there, act as repl client
+    startClient()
+  })
+})()
+
+
+function startClient() {
   let replCtx = require('repl').start({
     prompt: 'hbi> '
   }).context
 
-  let hbic = new hbi.HBIC(hbiCtx)
+  // use repl's context as client hbi context,
+  // reuse among reconnects
+  let hbic = new hbi.HBIC(replCtx)
   hbic.on(hbi.PACK_EVENT, (packet, code) => {
     console.log('[hbi client got packet of type ' + typeof(packet) + ']:', packet)
     console.log('[hbi flew code]:', code)
   })
   hbic.on(hbi.WIRE_ERR_EVENT, (err) => {
     console.log('[hbic wire error in client]:', err.stack || err)
+  })
+  hbic.on(hbi.WIRE_CLOSE_EVENT, () => {
+    console.log('[client hbic wire closed]')
   })
   hbic.on(hbi.PEER_ERR_EVENT, (err) => {
     console.log('[hbi landing error in server side]:', err)
@@ -110,11 +132,9 @@ svr.on('error', (err) => {
     })
   }
 
-  replCtx.hbiCtx = hbiCtx
   replCtx.hbic = hbic
   replCtx.send = hbic.send.bind(hbic)
   replCtx.reconnect = reconnect
 
   reconnect()
-})
-svr.listen(addr)
+}
