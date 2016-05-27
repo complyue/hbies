@@ -60,7 +60,7 @@ if (isFinite(port)) {
     })
     hbic.on(hbi.PEER_ERR_EVENT, (err) => {
       console.log('[hbi landing error in client side]:', err)
-      console.log('[disconnecting hbi] ...')
+      console.log('[disconnecting client] ...')
       hbic.disconnect()
     })
     hbic.on(hbi.LANDING_ERR_EVENT, (err, code) => {
