@@ -1,5 +1,7 @@
 'use strict';
 
-Object.assign(module.exports, require('./lib/constants'))
+Object.assign(exports, require('./lib/constants'))
 
-module.exports.HBIC = require('./lib/conn')
+exports.HBIC = require('./lib/conn')
+
+exports.ContextClass = require('./lib/context-class')
