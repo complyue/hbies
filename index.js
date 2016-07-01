@@ -4,4 +4,6 @@ Object.assign(exports, require('./lib/constants'))
 
 exports.HBIC = require('./lib/conn')
 
-exports.ContextClass = require('./lib/context-class')
+const ctxcls = require('./lib/context-class')
+exports.WithContext = ctxcls.WithContext
+exports.ContextClass = ctxcls.ContextClass
