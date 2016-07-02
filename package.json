@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "description": "Hosting Based Interfacing",
   "main": "index.js",
+  "browser": "browser.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/complyue/hbi/issues"
   },
-  "homepage": "https://github.com/complyue/hbi#readme"
+  "homepage": "https://github.com/complyue/hbi#readme",
+  "dependencies": {
+    "nodejs-websocket": "^1.6.0"
+  }
 }

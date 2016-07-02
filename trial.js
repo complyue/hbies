@@ -48,9 +48,8 @@ if (isFinite(port)) {
 
   let svr = require('net').createServer((socket) => {
     let hbic = new hbi.HBIC(hbiCtx)
-    hbic.on(hbi.PACKET_EVENT, (packet, code) => {
-      console.log('[hbi server got packet of type ' + typeof(packet) + ']:', packet)
-      console.log('[hbi flew code]:', code)
+    hbic.on(hbi.PACKET_EVENT, (code) => {
+      console.log('[hbi server landed code]:', code)
     })
     hbic.on(hbi.WIRE_ERR_EVENT, (err) => {
       console.log('[hbic wire error in server]:', err.stack || err)
