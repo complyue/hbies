@@ -1,6 +1,6 @@
 'use strict';
 
-const exports = module.exports = {
+module.exports = module.exports = {
 
   HBIC: require('./lib/sockconn'),
 
@@ -10,4 +10,4 @@ const exports = module.exports = {
 
 }
 
-Object.assign(exports, require('./lib/constants'))
+Object.assign(module.exports, require('./lib/constants'))
