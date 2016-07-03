@@ -1,6 +1,13 @@
 'use strict';
 
-Object.assign(exports, require('./lib/constants'))
+const exports = module.exports = {
 
-exports.HBIC = require('./lib/nodeconn')
-exports.SWSHBIC = require('./lib/swsconn')
+  HBIC: require('./lib/sockconn'),
+
+  get SWSHBIC() {
+    return require('./lib/swsconn')
+  }
+
+}
+
+Object.assign(exports, require('./lib/constants'))
