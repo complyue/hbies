@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/complyue/hbi#readme",
   "dependencies": {
-    "bluebird": "^3.4.1"
+    "bluebird": "^3.4.1",
+    "deep-equal": "^1.0.1"
   },
   "devDependencies": {
     "nodejs-websocket": "^1.6.0"
