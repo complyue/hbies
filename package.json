@@ -1,6 +1,6 @@
 {
   "name": "hbi",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Hosting Based Interfacing",
   "main": "index.js",
   "browser": "browser.js",
